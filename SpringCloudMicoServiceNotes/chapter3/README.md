@@ -96,3 +96,16 @@ Eureka Server的高可用实际上就是将自己作为服务向其他服务注�
         
 ##服务发现和消费
 
++ 服务消费者，主要完成两个目标，发现服务以及消费服务。
++ 服务发现的任务由Eureka客户端完成
++ 服务消费的任务有Ribbon完成
++ Ribbon是一个基于HTTP和TCP的客户端负载均衡器，它可以通过客户端中配置的`ribbonServerList`服务列表去轮询访问以达到均衡负载的作用。当Ribbon与Eureka联合使用时，Ribbon的服务实例清单`ribbonServerList`会被`DiscoveryEnabledNIWSServerList`重写，扩展成从Eureka注册中心获取服务端列表。同时，也会用`NIWSDiscoveryPing`来取代`IPing`，它将职责委托给Eureka来确定服务端是否启动。
+
+简单示例：
+
++ 启动服务注册中心，服务提供者，服务提供者以两个不同的端口号启动
++ 创建工程名`ribbon-consumer`的Spring Boot工程，引入Ribbon模块及Eureka模块的依赖
++ 主类增加`@EnableDiscoveryClient`注解，使客户端获得服务发现的能力。同时，在该主类中创建`RestTemplate`的Spring Boot实例，并通过`@LoadBanlanced`注解开启客户端负载均衡
+
+
+
