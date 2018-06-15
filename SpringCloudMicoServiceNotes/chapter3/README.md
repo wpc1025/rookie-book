@@ -50,3 +50,49 @@ Eureka客户端，主要处理服务的注册和发现。在应用程序运行�
 启动该应用，查看服务中心情况，访问http://localhost:1111
 
 ##注册服务提供者
+
+**1. 引入依赖**
+
+服务提供者引入Eureka依赖。
+
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+    </dependency>
+
+**2. 添加注解**
+
+在主类中增加`@EnableDiscoveryClient`注解
+
+**3. 增加配置**
+
+    spring.application.name=hello-server
+    eureka.client.service-url.defaultZone=http://localhost:1111/eureka
+    
+##高可用注册中心
+
+Eureka Server的高可用实际上就是将自己作为服务向其他服务注册中心注册自己，这样就可以形成一组互相注册的服务注册中心，以实现服务清单的互相同步，达到高可用的效果。
+
++ 创建`application-peer1.properties`，作为peer1服务中心的配置，并将`serviceUrl`指向peer2：
+
+        spring.application.name=eureka-server
+        server.port=1111    
+        eureka.instance.hostname=peer1
+        eureka.client.service-url.defaultZone=http://peer2:1112/eureka
+    
++ 创建`application-peer2.properties`，作为peer2服务中心的配置，并将serviceUrl指向peer1：
+
+        spring.application.name=eureka-server
+        server.port=1112
+        eureka.instance.hostname=peer2
+        eureka.client.service-url.defaultZone=http://peer1:1111/eureka
+        
++ 分别以peer1、peer2的配置启动应用程序
+
++ 服务提供方配置
+
+        spring.application.name=hello-server
+        eureka.client.service-url.defaultZone=http://peer1:1111/eureka/,http://peer2:1112/eureka/
+        
+##服务发现和消费
+
