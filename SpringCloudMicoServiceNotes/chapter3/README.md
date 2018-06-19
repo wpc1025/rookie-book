@@ -106,6 +106,34 @@ Eureka Server的高可用实际上就是将自己作为服务向其他服务注�
 + 启动服务注册中心，服务提供者，服务提供者以两个不同的端口号启动
 + 创建工程名`ribbon-consumer`的Spring Boot工程，引入Ribbon模块及Eureka模块的依赖
 + 主类增加`@EnableDiscoveryClient`注解，使客户端获得服务发现的能力。同时，在该主类中创建`RestTemplate`的Spring Boot实例，并通过`@LoadBanlanced`注解开启客户端负载均衡
++ 创建`ConsumerController`类，并通过`RestTemplate`来实现对`HELLO-SERVICE`服务提供的/hello接口进行调用
+
+##Eureka详解
+
+###基础架构
+
+Eureka服务治理框架的三要素：
+1. **服务注册中心：** Eureka提供的服务端，提供服务注册和发现
+2. **服务提供者：** 提供服务的应用，可以是Spring Boot应用，也可以是其他技术平台且遵循Eureka通讯机制的应用
+3. **服务消费者：** 消费者应用从服务注册中心获取服务列表，从而使消费者可以知道去何处调用其需要的服务
+
+###服务治理机制
+
+![rookie](images/fwzljcjgt.png)
+
+####服务提供者
+
+**服务注册**
+
+“服务提供者”在启动的时候会发送REST请求的方式将自己注册到Eureka Server上，同时带上自身服务的一些元数据信息。Eureka Server接收到这个REST请求之后，将元数据信息存储在一个双层结构Map中，其中第一层key是服务名，第二层的key是具体服务的实例名。
+
+**服务同步**
+
+服务注册中心因互相注册为服务，当服务提供者发送注册请求到一个服务注册中心时，它就会将请求发送给集群中相连的其他注册中心，从而实现注册中心之间的服务同步。
+
+**服务续约**
+
+
 
 
 
