@@ -175,6 +175,48 @@ Eureka Server在启动时会创建一个定时任务，默认每隔一段时间�
 
 
 
+##配置详解
+
+Eureka客户端的配置主要分为以下两个方面：
++ 服务注册相关的配置信息，包括服务注册中心的地址、服务获取的间隔时间、可用区域等
++ 服务实例相关的配置信息，包括服务实例的名称、IP地址、端口号、健康检查路径等
+
+###服务注册类配置
+
+**指定注册中心**
+
++ 通过`eureka.client.service-url`参数指定注册中心
++ 该参数配置值存储在HashMap类型中，并且设置一组默认值，默认值的key为`defaultZone`、value为`http://localhost:8761/eureka/
++ 当构建了高可用服务注册中心集群时，配置多个注册中心的地址（使用逗号进行分割）
++ 当加入安全校验时，配置地址为`http://<username>:<password>@localhost:1111/eureka
+
+**其他配置**
+
+参见`org.springframework.cloud.netflix.eureka.EurekaClientConfigBean`
+
+###服务实例类配置
+
+详细服务实力类配置参数，查看`org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean`，都以`eureka.instance`为前缀。
+
+通过`eureka.instance.<properties>=<value>`的格式对标准化元数据进行配置，其中`<properties>`就是`EurekaInstanceConfigBean`对象中的成员变量名。对于自定义元数据，通过`Eureka.instance.metadataMap.<key>=<value>`的格式进行配置。
+
+**实例名配置**
+
++ 实例名，即InstanceInfo中的instanceId参数，是区分同一服务中不同实例的唯一标识。
++ 实例名的命名规则，可以通过`eureka.instance.instanceId`参数进行配置。
+
+**端点配置**
 
 
+**健康检测**
+
+默认情况下，Eureka中各个服务实例的健康检测并不是通过spring-boot-actuactor模块的/health端点来实现的，而是依靠客户端心跳的方式来保持服务实例的存活。
+
+默认的心跳实现方式可以有效的检查客户端是否存活，但却无法保证客户端能够正常提供服务。
+
+把Eureka的健康检测交给spring-boot-actuator模块的/health端点，以实现更加全面的健康状态维护
++ 引入`spring-boot-starter-actuator`模块依赖
++ 配置参数`eureka.client.healthcheck.enable=true`
+
+##跨平台支持
 
