@@ -133,6 +133,47 @@ Eureka服务治理框架的三要素：
 
 **服务续约**
 
+服务注册完成后，服务提供者会维护一个心跳用来持续告诉Eureka Server：“我还活着”，以防止Eureka Server的“剔除任务”将该服务实例从服务列表中排除出去，称该操作为服务续约。
+
+    eureka.instance.lease-renewal-interval-in-seconds=30
+    eureka.instance.lease-expiration-duration-in-seconds=90
+    
+`eureka.instance.lease-renewal-interval-in-seconds`用于定义服务续约任务的调用间隔时间，默认30秒  
+`eureka.instance.lease-expiration-duration-in-seconds`用于定义服务失效的时间，默认90秒
+
+####服务消费者
+
+**获取服务**
+
+Eureka Server 会维护一份只读的服务清单返回给客户端，该缓存清单30秒更新一次。
+
+`eureka.client.registry-fetch-interval-seconds=30`参数修改缓存清单的更新时间。
+
+**服务调用**
+
+Region？
+Zone？
+
+**服务下线**
+
+服务关闭或重启，会发送通知给Eureka Server，服务下线
+
+####服务注册中心
+
+**失效剔除**
+
+Eureka Server在启动时会创建一个定时任务，默认每隔一段时间（默认60秒）将当前清单中超时（默认90秒）没有续约的服务剔除出去。
+
+**自我保护**
+
+统计心跳失败的比例在15分钟之内是否低于85%，若出现，不会让实例信息立即失效，尽可能保护这些注册信息。
+
+`eureka.server.enable-self-preservation=false`可用来关闭自我保护机制
+
+##源码分析
+//TODO
+
+
 
 
 
