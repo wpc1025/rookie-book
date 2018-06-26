@@ -11,8 +11,32 @@ Spring Cloud Ribbon 是一个基于HTTP和TCP的客户端负载均衡工具，�
 
 ##RestTemplate详解
 
-###Get请求
+###GET请求
 
+在`RestTemplate`中，对GET请求可以通过如下两个方法进行调用实现：
++ `getForEntity`函数
++ `getForObject`函数
+
+###POST请求
+
+在`RestTemplate`中，对POST请求时可以通过如下三个方法进行调用实现：
++ `postForEntity`函数
++ `postForObject`函数
++ `postForLocation`函数
+
+###PUT请求
+
+在`RestTemplate`中，对PUT请求可以通过`put`方法进行调用实现
+
+###DELETE请求
+
+在`RestTemplate`中，对DELETE请求可以通过`delete`方法进行调用实现
+
+##源码分析
+
+##负载均衡器
+
+##负载均衡策略
 
 
 
