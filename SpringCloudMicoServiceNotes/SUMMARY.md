@@ -2,3 +2,4 @@
 * [第二章 微服务构建: Spring Boot](chapter2/README.md)
 * [第三章 服务治理：Spring Cloud Eureka](chapter3/README.md)
 * [第四章 客户端负载均衡：Spring Cloud Ribbon](chapter4/README.md)
+* [第五章 服务容错保护：Spring Cloud Hystrix](chapter5/README.md)
