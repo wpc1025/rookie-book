@@ -8,3 +8,52 @@
 
 Spring Cloud Hystrix 的目标，在于通过控制那些访问远程系统、服务和第三方库的节点，从而对延迟和故障提供更强大的容错能力。Hystrix具备服务降级、服务熔断、线程和信号隔离、请求缓存、请求合并以及服务监控等强大能力。
 
+##快速入门
+
++ 消费端pom.xml引入依赖
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+    </dependency>
+    
++ 在消费端主类中使用`@EnableCircuitBreaker`注解
++ 在调用服务的函数上增加`@HystrixCommand`注解，注解中设置`fallbackMethod`属性值，指定服务不可用时调用的方法
+
+##原理分析
+
+###工作流程
+
+###断路器原理
+
+###依赖隔离
+
+##使用详解
+
+###创建请求命令
+
+###定义服务降级
+
+###异常处理
+
+###命令名称、分组以及线程池划分
+
+###请求缓存
+
+###请求合并
+
+##属性详解
+
+###Command属性
+
+###collapser属性
+
+###threadPool属性
+
+##Hystrix仪表盘
+
+###Turbine集群监控
+
+###构建监控聚合服务
+
+###与消息代理结合
+
