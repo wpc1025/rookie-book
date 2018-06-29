@@ -1,1 +1,1 @@
-* [笔记](chapter1/README.md)
+* [python基础](chapter1/README.md)
