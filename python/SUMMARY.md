@@ -4,3 +4,4 @@
 * [函数式编程](chapter4/README.md)
 * [模块](chapter5/README.md)
 * [面向对象编程](chapter6/README.md)
+* [面向对象高级编程](chapter7/README.md)
