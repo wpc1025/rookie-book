@@ -3,3 +3,4 @@
 * [高级特性](chapter3/README.md)
 * [函数式编程](chapter4/README.md)
 * [模块](chapter5/README.md)
+* [面向对象编程](chapter6/README.md)
