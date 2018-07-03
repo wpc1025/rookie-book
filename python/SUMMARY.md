@@ -5,3 +5,4 @@
 * [模块](chapter5/README.md)
 * [面向对象编程](chapter6/README.md)
 * [面向对象高级编程](chapter7/README.md)
+* [错误、调试和测试](chapter8/README.md)
