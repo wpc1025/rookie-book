@@ -149,7 +149,51 @@ Python的`os`模块封装了操作系统的目录和文件系统，这些函数�
 
 ###序列化
 
-我们把变量从内存中变成可存储或传输的过程称之为序列化，反过来，把变量内容从序列化的对象重新读取到内存里称之为反序列化
+我们把变量从内存中变成可存储或传输的过程称之为序列化，反过来，把变量内容从序列化的对象重新读取到内存里称之为反序列化，Python提供了`pickle`模块来实现序列化
+
+    d = dict(name='rookie', age=25, score=100)
+    print(pickle.dumps(d))
+    
+    f = open('C:\\Users\\1\\Desktop\\pythonWrite.txt', 'wb')
+    pickle.dump(d, f)
+    f.close()
+    
+    f = open('C:\\Users\\1\\Desktop\\pythonWrite.txt', 'rb')
+    d = pickle.load(f)
+    f.close()
+    print(d)
+    
+###JSON
+
++ Python内置的`json`模块提供了非常完善的Python对象到JSON格式的转换
++ `dumps()`方法返回一个`str`，内容就是标准的JSON。`dump()`方法可以直接将JSON写入一个`file-like Object`
++ 要把JSON反序列化为Python对象，用`loads()`或者对应的`load()`方法
+
+
+    import json
+    
+    d = dict(name='rookie', age=25, score=100)
+    print(json.dumps(d))
+    
+    json_str = '{"name": "rookie", "age": 25, "score": 100}'
+    d = json.loads(json_str)
+    print(d)
+
+###JSON进阶
+
++ 可选参数`default`就是把任意一个对象变成一个可序列为JSON的对象
++ `class`的实例都有一个`__dict__`属性，它就是一个`dict`，用来存储实例变量，也有少数例外，比如定义了`__slots__`的class
+
+    
+    import json
+    class Student(object):
+        def __init__(self, name, age, score):
+            self.name = name
+            self.age = age
+            self.score = score
+    
+    s = Student('rookie', 30, 100)
+    print(json.dumps(s, default=lambda obj: obj.__dict__))
 
 
 
