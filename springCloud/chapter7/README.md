@@ -138,6 +138,46 @@
     
 ##路由详解
 
+###传统路由配置
+
++ 单实例配置
+
+
+    zuul.routes.user-service.path=/user-service/**
+    zuul.routes.user-service.url=http://localhost:8080/
+    
++ 多实例配置
+
+
+    zuul.routes.user-service.path=/user-service/**
+    zuul.routes.user-service.service-id=user-service
+    ribbon.eureka.enable=false
+    user-service.ribbon.listOfServers=http://localhost:8080/,http://localhost:8081
+    
+###服务路由配置
+
++ 服务路由配置，可采用`zuul.routes.<serviceId>=<path>`的简洁方式进行配置
++ 默认情况下，所有`Eureka`上的服务都会被`Zuul`自动的创建映射关系来进行路由。可以使用`zuul.ignored-services`参数来设置一个服务名匹配表达式来定义不自动创建路由的规则
++ `Zuul`提供了自定义服务与路由映射关系的功能，如可将服务名为`userservice-v1`自动映射为`/v1/userservice/**`
+
+
+        @Bean
+        public PatternServiceRouteMapper patternServiceRouteMapper() {
+            return new PatternServiceRouteMapper(
+                    "(?<name>^.+)-(?<version>v+$)",
+                    "${version}/${name}");
+        }
+        
++ 路径匹配采用Ant风格
+    + `?`——匹配任意单个字符
+    + `*`——匹配任意数量的字符
+    + `**`——匹配任意数量的字符，支持多级目录
+    
++ 使用`zuul.ignored-patterns=/**/hello/**`忽略`hello`接口
++ `zuul.prefix=/api`全局的为路由规则增加前缀信息
++ `zuul.routes.api-b.url=forward:/local`，通过`forward`实现本地跳转，保证网关内部有对应`local`的接收处理
+
+
 
 
 
