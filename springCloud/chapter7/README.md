@@ -176,6 +176,50 @@
 + 使用`zuul.ignored-patterns=/**/hello/**`忽略`hello`接口
 + `zuul.prefix=/api`全局的为路由规则增加前缀信息
 + `zuul.routes.api-b.url=forward:/local`，通过`forward`实现本地跳转，保证网关内部有对应`local`的接收处理
++ 默认情况下，`zuul`请求路由时，会过滤掉HTTP请求头信息中的一些敏感信息。默认的敏感头信息通过`zuul.sensitiveHeaders`参数定义，包括`cookie`、`Set-Cookie`、`Authorization`三个属性
+    + 通过设置全局参数为空覆盖默认值，`zuul.sensitiveHeaders=`
+    + 对指定路由开启自定义敏感头，`zuul.routes.<route>.customSensitiveHeaders=true`
+    + 将指定路由的敏感头设置为空，`zuul.routes.<route>.sensitiveHeaders=`
+    
++ `zuul.addHostHeader=true`使网关在路由转发前为请求设置`Host`头信息，以标示最初的服务端请求地址
+
+##过滤器详解
+
+###过滤器
+
+Spring Cloud Zuul实现的过滤器必须包含4个基本特征：过滤类型、执行顺序、执行条件、具体操作
++ `filterType`:函数返回值代表过滤器的类型（在HTTP请求过程中定义的各个阶段）
+    + `pre`：可以在请求被路由之前调用
+    + `routing`：在路由请求时被调用
+    + `post`：在routing和error过滤器之后被调用
+    + `error`：处理请求时发生错误时被调用
++ `filterOrder`：定义过滤器的执行顺序，数值越小优先级越高
++ `shouldFilter`：判断过滤器是否被执行
++ `run`：过滤器的具体逻辑
+
+###请求生命周期
+
+![rookie](20180920180307.png)
+
+###异常处理
+
++ `try-catch`处理：在自定义的过滤器处理逻辑中增加`try-catch`，在`catch`中对`error.status_code`等进行赋值
++ `ErrorFilter`处理：
+
+###禁用过滤器
+
+使用`zuul.<SimpleClassName>.<filterType>.disable=true`对过滤器进行禁用
+
+##动态加载
+
+###动态路由
+
+###动态过滤器
+
+
+eg：动态路由及动态过滤器都是通过分布式配置中心进行实现
+
+
 
 
 
