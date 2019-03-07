@@ -1,1 +1,1 @@
-* [第三章 垃圾收集器和回收策略](chapter8/README.md)
+* [第三章 垃圾收集器和回收策略](chapter3/README.md)
