@@ -1,1 +1,1 @@
-* [第八章 泛型程序设计](chapter8/README.md)
+* [第三章 垃圾收集器和回收策略](chapter8/README.md)
