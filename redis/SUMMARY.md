@@ -1,1 +1,2 @@
-* [第3章 Redis命令](chapter3/README.md)
+* [字符串](str/README.md)
+* [列表](list/README.md)
