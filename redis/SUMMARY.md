@@ -1,2 +1,6 @@
 * [字符串](str/README.md)
 * [列表](list/README.md)
+* [散列](hash/README.md)
+* [集合](set/README.md)
+* [有序集合](zset/README.md)
+* [发布订阅](pubsub/README.md)
