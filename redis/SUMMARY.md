@@ -4,3 +4,7 @@
 * [集合](set/README.md)
 * [有序集合](zset/README.md)
 * [发布订阅](pubsub/README.md)
+* [排序](sort/README.md)
+* [事务](transaction/README.md)
+* [过期时间](expiredate/README.md)
+* [数据安全和性能保障](sjaq/README.md)
