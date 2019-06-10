@@ -2,3 +2,5 @@
 * [which命令](day02/README.md)
 * [locate命令](day03/README.md)
 * [find命令](day04/README.md)
+* [zip命令](day05/README.md)
+* [unzip命令](day06/README.md)
