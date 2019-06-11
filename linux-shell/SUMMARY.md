@@ -5,3 +5,4 @@
 * [zip命令](day05/README.md)
 * [unzip命令](day06/README.md)
 * [tail命令](day07/README.md)
+* [wget命令](day08/README.md)
