@@ -6,3 +6,4 @@
 * [unzip命令](day06/README.md)
 * [tail命令](day07/README.md)
 * [wget命令](day08/README.md)
+* [awk命令](day09/README.md)
