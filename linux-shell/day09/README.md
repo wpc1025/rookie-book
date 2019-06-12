@@ -25,23 +25,26 @@
 
 ### 显示最近登录的5个账号
 
-    [rookie@iZbp18hovh1qxijbodbas9Z ~]$ last -n 5
-    rookie   pts/0        114.240.55.235   Wed Jun 12 19:04   still logged in   
-    rookie   pts/2        114.240.55.235   Tue Jun 11 17:15 - 17:45  (00:29)    
-    rookie   pts/0        114.240.55.235   Tue Jun 11 15:57 - 19:00  (03:03)    
-    rookie   pts/0        114.240.55.235   Mon Jun 10 15:51 - 19:43  (03:52)    
-    rookie   pts/0        114.240.55.235   Thu Jun  6 16:18 - 17:57  (01:39)    
+```shell
+[rookie@iZbp18hovh1qxijbodbas9Z ~]$ last -n 5
+rookie   pts/0        114.240.55.235   Wed Jun 12 19:04   still logged in   
+rookie   pts/2        114.240.55.235   Tue Jun 11 17:15 - 17:45  (00:29)    
+rookie   pts/0        114.240.55.235   Tue Jun 11 15:57 - 19:00  (03:03)    
+rookie   pts/0        114.240.55.235   Mon Jun 10 15:51 - 19:43  (03:52)    
+rookie   pts/0        114.240.55.235   Thu Jun  6 16:18 - 17:57  (01:39)    
+
+wtmp begins Sun Oct 15 23:25:17 2017
+[rookie@iZbp18hovh1qxijbodbas9Z ~]$ last -n 5 | awk '{print $1}'
+rookie
+rookie
+rookie
+rookie
+rookie
+
+wtmp
+[rookie@iZbp18hovh1qxijbodbas9Z ~]$ 
+```
     
-    wtmp begins Sun Oct 15 23:25:17 2017
-    [rookie@iZbp18hovh1qxijbodbas9Z ~]$ last -n 5 | awk '{print $1}'
-    rookie
-    rookie
-    rookie
-    rookie
-    rookie
-    
-    wtmp
-    [rookie@iZbp18hovh1qxijbodbas9Z ~]$ 
     
 awk按照分割符将记录划分域，`$0`表示所有域，`$1`表示第一个域。。。
 
