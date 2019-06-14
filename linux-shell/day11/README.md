@@ -44,7 +44,7 @@
     passwd: all authentication tokens updated successfully.
     [wpc@iZbp18hovh1qxijbodbas9Z ~]$ 
 
-### 锁定密码，让用户无法修改密码
+### 3.3 锁定密码，让用户无法修改密码
 
     [root@iZbp18hovh1qxijbodbas9Z ~]# passwd -l wpc
     Locking password for user wpc.
@@ -56,7 +56,7 @@
     (current) UNIX password: 
     passwd: Authentication token manipulation error
 
-### 清除密码
+### 3.4 清除密码
 
     [root@iZbp18hovh1qxijbodbas9Z ~]# passwd -d wpc
     Removing password for user wpc.
