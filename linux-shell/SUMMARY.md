@@ -9,3 +9,5 @@
 * [awk命令](day09/README.md)
 * [grep命令](day10/README.md)
 * [passwd命令](day11/README.md)
+* [tar命令](day12/README.md)
+* [diff命令](day13/README.md)
