@@ -12,3 +12,5 @@
 * [tar命令](day12/README.md)
 * [diff命令](day13/README.md)
 * [sed命令](day14/README.md)
+* [scp命令](day15/README.md)
+* [nc命令](day16/README.md)
