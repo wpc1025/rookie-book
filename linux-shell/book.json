@@ -29,7 +29,8 @@
   "plugins": [
     "pageview-count",
     "back-to-top-button",
-    "page-treeview"
+    "page-treeview",
+    "disqus"
   ],
   "title": "Linux 命令学习",
   "author": "rookie",
