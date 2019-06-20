@@ -14,3 +14,4 @@
 * [sed命令](day14/README.md)
 * [scp命令](day15/README.md)
 * [nc命令](day16/README.md)
+* [chmod命令](day17/README.md)

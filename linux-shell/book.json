@@ -27,7 +27,9 @@
     "paperSize": "a4"
   },
   "plugins": [
-    "pageview-count"
+    "pageview-count",
+    "back-to-top-button",
+    "page-treeview"
   ],
   "title": "Linux 命令学习",
   "author": "rookie",
