@@ -29,8 +29,7 @@
   "plugins": [
     "pageview-count",
     "back-to-top-button",
-    "page-treeview",
-    "disqus"
+    "page-treeview"
   ],
   "title": "redis设计与实现",
   "author": "rookie",
