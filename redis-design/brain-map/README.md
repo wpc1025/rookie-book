@@ -1,1 +1,1 @@
-![Redis设计与实现](../images/redis设计与实现.png)
+[Redis设计与实现脑图](https://mubu.com/doc/x0Y5w0avjn)

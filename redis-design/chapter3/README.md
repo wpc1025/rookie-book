@@ -164,6 +164,35 @@ load_factor = ht[0].used / ht[0].size
 - 删、查、改，会在`ht[0]`，`ht[1]`两张表中进行查找
 - 增，数据会落在`ht[1]`表中
 
+## 六、redisObject
+
+```C
+
+typedef struct redisObject {
+
+​	unsigned  type:4;
+
+​	unsigned encoding:4;
+
+​	unsigned lru:REDIS_LRU_BITS;
+
+​	int refcount;
+
+​	void *ptr;	
+
+}
+
+```
+
+字段含义解释：
+- 4位的`type`表示具体的数据类型，Redis中共有5种数据类型
+- 4位的`encoding`表示该类型的物理编码方式，同一种数据类型可能有不同的编码方式，Redis目前共有8种编码方式
+- `lru`字段表示内存超限时采用LRU算法清除内存中的对象
+- `ptr`指向真正的存储结构
+
+**为什么需要redisObject？**
+Redis采用`redisObject`结构来统一五种不同的数据类型，这样所有的数据类型都可以以相同的形式在函数间传递而不用使用特定的类型结构。
+
 
 
 
