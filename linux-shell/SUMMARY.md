@@ -18,3 +18,4 @@
 * [chown命令](day18/README.md)
 * [df命令](day19/README.md)
 * [free命令](day20/README.md)
+* [fc命令](day21/README.md)
