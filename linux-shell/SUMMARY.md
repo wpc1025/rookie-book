@@ -19,3 +19,4 @@
 * [df命令](day19/README.md)
 * [free命令](day20/README.md)
 * [fc命令](day21/README.md)
+* [uname命令](day22/README.md)
