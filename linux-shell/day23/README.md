@@ -17,7 +17,7 @@
 
 ## 三、栗子
 
-### 3.1 
+### 3.1 监控文件内容的变化
 
     [rookie@iZbp18hovh1qxijbodbas9Z ~]$ watch -n 2 -d cat test.txt 
     Every 2.0s: cat test.txt                                                                                               Tue Jun 25 22:25:52 2019
