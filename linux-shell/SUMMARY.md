@@ -21,3 +21,5 @@
 * [fc命令](day21/README.md)
 * [uname命令](day22/README.md)
 * [watch命令](day23/README.md)
+* [ifconfig命令](day24/README.md)
+* [split命令](day25/README.md)
