@@ -23,3 +23,4 @@
 * [watch命令](day23/README.md)
 * [ifconfig命令](day24/README.md)
 * [split命令](day25/README.md)
+* [tee命令](day26/README.md)
