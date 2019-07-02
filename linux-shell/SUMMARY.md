@@ -26,3 +26,4 @@
 * [tee命令](day26/README.md)
 * [ln命令](day27/README.md)
 * [touch命令](day28/README.md)
+* [lsof命令](day29/README.md)
