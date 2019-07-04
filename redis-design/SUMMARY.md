@@ -4,4 +4,5 @@
 * [字典](chapter3/README.md)
 * [跳跃表](chapter4/README.md)
 * [整数集合](chapter5/README.md)
+* [压缩列表](chapter6/README.md)
 * [对象](chapter8/README.md)
