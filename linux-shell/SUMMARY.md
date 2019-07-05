@@ -29,3 +29,4 @@
 * [lsof命令](day29/README.md)
 * [alias命令](day30/README.md)
 * [unalias命令](day31/README.md)
+* [xargs命令](day32/README.md)
