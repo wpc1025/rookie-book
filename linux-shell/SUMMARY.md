@@ -32,3 +32,4 @@
 * [xargs命令](day32/README.md)
 * [useradd命令](day33/README.md)
 * [tree命令](day34/README.md)
+* [file命令](day35/README.md)
