@@ -54,6 +54,21 @@ typedef struct redisObject {
 | REDIS_ENCODING_INTSET | 整数集合 |
 | REDIS_ENCODING_SKIPLIST | 跳跃表和字典 |
 
+每种类型的对象都至少使用了两种不同的编码，下表为每种类型的对象可以使用的编码
+
+| 类型 | 编码 | 对象 |
+| :--- | :--- | :--- |
+| REDIS_STRING | REDIS_ENCODING_INT | 使用整数值实现的字符串对象 |
+| REDIS_STRING | REDIS_ENCODING_EMBSTR | 使用embstr编码的简单动态字符串实现的字符串对象 |
+| REDIS_STRING | REDIS_ENCODING_RAW | 使用简单动态字符串实现的字符串对象 |
+| REDIS_LIST | REDIS_ENCODING_ZIPLIST | 使用压缩列表实现的列表对象 |
+| REDIS_LIST | REDIS_ENCODING_LINKEDLIST | 使用双端列表实现的列表对象 |
+| REDIS_HASH | REDIS_ENCODING_ZIPLIST | 使用压缩列表实现的哈希对象 |
+| REDIS_HASH | REDIS_ENCODING_HT | 使用字典实现的哈希对象 |
+| REDIS_SET | REDIS_ENCODING_INTSET | 使用整数集合实现的集合对象 |
+| REDIS_SET | REDIS_ENCODING_HT | 使用字典实现的集合对象 |
+| REDIS_ZSET | REDIS_ENCODING_ZIPLIST | 使用压缩列表实现的有序集合对象 |
+| REDIS_ZSET | REDIS_ENCODING_SKIPLIST | 使用跳跃表和字典实现的有序集合对象 |
 
 
 
