@@ -44,6 +44,7 @@ typedef struct redisObject {
 `encoding`属性记录了对象所使用的的编码，即这个对象使用什么数据结构作为对象的底层实现，下表列出了`encoding`属性可能的值：
 
 | 编码常量 | 编码所对应的底层数据结构 |
+| :--- | :--- |
 | REDIS_ENCODING_INT | long类型的整数 |
 | REDIS_ENCODING_EMBSTR | embstr编码的简单动态字符串 |
 | REDIS_ENCODING_RAW | 简单动态字符串 |
