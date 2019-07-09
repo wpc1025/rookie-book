@@ -33,3 +33,4 @@
 * [useradd命令](day33/README.md)
 * [tree命令](day34/README.md)
 * [file命令](day35/README.md)
+* [nl命令](day36/README.md)
