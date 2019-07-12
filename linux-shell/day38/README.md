@@ -1,13 +1,52 @@
 # source命令(2019.07.11)
 
-也称为“点命令”，也就是一个点符号（.），是bash的内部命令
+- `source`命令可用于将任何函数文件加载到当前shell脚本或命令提示符中
+- 从给定的`FILENAME`读取命令并返回
+- `$path`中的路径名用于查找包含`FILENAME`的目录。如果提供了任何`ARGUMENTS`，它们将成为执行`FILENME`时的位置参数
 
-功能： 使Shell读入指定的Shell程序文件并依次执行文件中的所有语句，source命令通常用于重新执行刚修改的初始化文件，使之立即生效，而不必注销并重新登录
+## 一、语法
 
-## 一、用法
+`source filename [arguments]`
 
-`source filename`
-`. filename`
+## 二、栗子
 
-简单的读取脚本里的语句并依次在当前shell里面执行，没有建立新的子shell。脚本里面所有新建、改变变量的语句都会保存在当前shell里面
+1. 创建如下内容的`mylib.sh`脚本
 
+    ```
+    #!/bin/bash
+    
+    JATL_ROOT=/wwww/httpd
+    is_root(){
+        [ $(id -u) -eq 0 ] && return $TRUE || return $FALSE
+    }
+    ```
+
+2. 创建`test.sh`脚本，在脚本中调用`is_root()`
+
+    ```
+    #!/bin/bash
+    # Load the mylib.sh using source command
+    source mylib.sh
+    
+    echo "JATL_ROOT is set to $JATL_ROOT"
+    
+    is_root && echo "You are logged in as root." || echo "You are not logged in as root."
+    ```
+
+3. 修改为可执行文件并执行
+
+    ```
+    [rookie@izbp18hovh1qxijbodbas9z ~]$ chmod +x test.sh 
+    [rookie@izbp18hovh1qxijbodbas9z ~]$ ./test.sh 
+    JATL_ROOT is set to /wwww/httpd
+    You are not logged in as root.
+    [rookie@izbp18hovh1qxijbodbas9z ~]$ 
+    ```
+
+## 三、关于返回状态的注意事项
+
+`source`命令返回在`FILENAME`中执行的最后一个命令的状态；如果无法读取`FILENAME`，则会失败。
+
+退出状态0表示源文件成功读取
+
+退出状态1表示源文件无法读取
