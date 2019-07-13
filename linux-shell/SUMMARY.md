@@ -37,3 +37,4 @@
 * [ps命令](day37/README.md)
 * [source命令](day38/README.md)
 * [fmt命令](day39/README.md)
+* [netstat命令](day40/README.md)
