@@ -26,7 +26,9 @@
     "pageNumbers": false,
     "paperSize": "a4"
   },
-  "plugins": [],
+  "plugins": [
+    "page-treeview"
+  ],
   "title": "docker学习笔记",
   "author": "rookie",
   "variables": {},
