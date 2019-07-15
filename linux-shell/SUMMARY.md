@@ -39,3 +39,4 @@
 * [fmt命令](day39/README.md)
 * [netstat命令](day40/README.md)
 * [echo命令](day41/README.md)
+* [hostname命令](day42/README.md)
