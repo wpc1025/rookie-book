@@ -41,3 +41,4 @@
 * [echo命令](day41/README.md)
 * [hostname命令](day42/README.md)
 * [look命令](day43/README.md)
+* [date命令](day44/README.md)
