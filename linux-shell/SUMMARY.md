@@ -44,3 +44,4 @@
 * [date命令](day44/README.md)
 * [cat命令](day45/README.md)
 * [cp命令](day46/README.md)
+* [export命令](day47/README.md)
