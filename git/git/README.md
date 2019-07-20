@@ -160,3 +160,6 @@ git mv file_from file_to
     doc/**/*.pdf
     ```
 
+## 五、查看提交历史
+
+`git log`
