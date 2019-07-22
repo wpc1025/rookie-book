@@ -45,3 +45,5 @@
 * [cat命令](day45/README.md)
 * [cp命令](day46/README.md)
 * [export命令](day47/README.md)
+* [du命令](day48/README.md)
+* [su命令](day49/README.md)
