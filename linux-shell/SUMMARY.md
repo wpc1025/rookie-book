@@ -47,3 +47,4 @@
 * [export命令](day47/README.md)
 * [du命令](day48/README.md)
 * [su命令](day49/README.md)
+* [rsync命令](day50/README.md)
