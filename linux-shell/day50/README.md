@@ -99,3 +99,8 @@ rsync [OPTION]... rsync://[USER@]HOST[:PORT]/SRC [DEST]
 ```
 
 
+参考博客地址：
+
+[Linux命令——rsync](https://www.cnblogs.com/kelamoyujuzhen/p/10089454.html)
+
+
