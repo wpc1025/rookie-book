@@ -48,3 +48,4 @@
 * [du命令](day48/README.md)
 * [su命令](day49/README.md)
 * [rsync命令](day50/README.md)
+* [more命令](day51/README.md)
