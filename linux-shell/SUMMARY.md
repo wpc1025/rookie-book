@@ -49,3 +49,4 @@
 * [su命令](day49/README.md)
 * [rsync命令](day50/README.md)
 * [more命令](day51/README.md)
+* [kill命令](day52/README.md)
