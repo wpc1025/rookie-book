@@ -50,3 +50,6 @@
 * [rsync命令](day50/README.md)
 * [more命令](day51/README.md)
 * [kill命令](day52/README.md)
+* [head命令](day53/README.md)
+* [pwd命令](day54/README.md)
+* [rm命令](day55/README.md)
