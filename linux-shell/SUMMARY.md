@@ -53,3 +53,4 @@
 * [head命令](day53/README.md)
 * [pwd命令](day54/README.md)
 * [rm命令](day55/README.md)
+* [nohup命令](day56/README.md)
