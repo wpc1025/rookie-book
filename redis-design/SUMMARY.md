@@ -7,3 +7,4 @@
 * [压缩列表](chapter6/README.md)
 * [对象](chapter8/README.md)
 * [数据库](chapter9/README.md)
+* [RDB持久化](chapter10/README.md)
