@@ -8,3 +8,4 @@
 * [对象](chapter8/README.md)
 * [数据库](chapter9/README.md)
 * [RDB持久化](chapter10/README.md)
+* [AOF持久化](chapter11/README.md)
