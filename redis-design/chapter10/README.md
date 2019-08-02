@@ -85,8 +85,6 @@ struct redisServer {
 };
 ```
 
-<font color='red'>`BGSAVE`执行期间的更新操作，计数器如何计数？？？？</font>
-
 ## 三、RDB文件结构
 
 ![RDB文件结构](./10-2.png)
