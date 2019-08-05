@@ -59,3 +59,4 @@
 * [groups命令](day59/README.md)
 * [groupmod命令](day60/README.md)
 * [chgrp命令](day61/README.md)
+* [history命令](day62/README.md)
