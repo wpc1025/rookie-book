@@ -61,3 +61,4 @@
 * [chgrp命令](day61/README.md)
 * [history命令](day62/README.md)
 * [host命令](day63/README.md)
+* [tac命令](day64/README.md)
