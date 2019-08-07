@@ -23,36 +23,32 @@
 ## 三、实例
 
 ```
-[root@izbp18hovh1qxijbodbas9z ~]# 
 [root@izbp18hovh1qxijbodbas9z ~]# cat aaa.txt 
+111 
+222
 aaa 
 bbb 
 ccc 
 ddd 
 eee 
-111 
-222
 [root@izbp18hovh1qxijbodbas9z ~]# cat bbb.txt 
+aaa 
 bbb 
 ccc 
-aaa 
 hhh 
-ttt 
 jjj
+ttt 
 [root@izbp18hovh1qxijbodbas9z ~]# comm aaa.txt bbb.txt 
-aaa 
+111 
+222
+		aaa 
 		bbb 
 		ccc 
-comm: file 2 is not in sorted order
-	aaa 
 ddd 
 eee 
-comm: file 1 is not in sorted order
-111 
-222
 	hhh 
-	ttt 
 	jjj
+	ttt 
 [root@izbp18hovh1qxijbodbas9z ~]# 
 ```
 
