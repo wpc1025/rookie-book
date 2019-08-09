@@ -64,3 +64,4 @@
 * [tac命令](day64/README.md)
 * [comm命令](day65/README.md)
 * [sort命令](day66/README.md)
+* [stat命令](day67/README.md)
