@@ -65,3 +65,6 @@
 * [comm命令](day65/README.md)
 * [sort命令](day66/README.md)
 * [stat命令](day67/README.md)
+* [rename命令](day68/README.md)
+* [pidof命令](day69/README.md)
+* [md5sum命令](day70/README.md)
