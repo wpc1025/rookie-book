@@ -68,3 +68,4 @@
 * [rename命令](day68/README.md)
 * [pidof命令](day69/README.md)
 * [md5sum命令](day70/README.md)
+* [rmdir命令](day71/README.md)
