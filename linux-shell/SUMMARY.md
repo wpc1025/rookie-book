@@ -69,3 +69,4 @@
 * [pidof命令](day69/README.md)
 * [md5sum命令](day70/README.md)
 * [rmdir命令](day71/README.md)
+* [数据流重导向](day72/README.md)
