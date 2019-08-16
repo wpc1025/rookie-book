@@ -71,3 +71,4 @@
 * [rmdir命令](day71/README.md)
 * [数据流重导向](day72/README.md)
 * [cal](day73/README.md)
+* [whereis](day74/README.md)
