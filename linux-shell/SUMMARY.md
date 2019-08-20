@@ -72,3 +72,4 @@
 * [数据流重导向](day72/README.md)
 * [cal](day73/README.md)
 * [whereis](day74/README.md)
+* [mkdir](day75/README.md)
