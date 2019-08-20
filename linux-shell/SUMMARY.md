@@ -74,3 +74,5 @@
 * [whereis](day74/README.md)
 * [mkdir](day75/README.md)
 * [id](day76/README.md)
+* [chage](day77/README.md)
+* [nologin](day78/README.md)
