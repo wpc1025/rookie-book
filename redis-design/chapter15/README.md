@@ -68,6 +68,54 @@
 
 ## PSYNC命令的实现
 
+![PSYNC执行完整重同步和部分重同步时可能遇上的情况](./15-5.png)
+
+## 复制的实现
+
+1. 设置主服务器的地址和端口
+    ```C
+    struct redisServer {
+        // ...
+        
+        // 主服务器的地址
+        char *masterhost;
+        
+        // 主服务器的端口
+        int masterport;
+    };
+    ```
+
+2. 建立套接字连接
+3. 发送PING命令
+4. 身份验证
+    ![从服务器在身份验证阶段可能遇上的情况](./15-6.png)
+5. 发送端口信息
+
+    从服务器执行命令`REPLCONF listening-port <port-number>`，向主服务器发送从服务器的监听端口号。主服务器在接收到这个命令之后，会将端口号记录在从服务器对应的客户端状态的`slave_listening_port`属性中。
+    
+    ```C
+    typedef struct redisClient {
+        // ...
+        
+        // 从服务器的监听端口号
+        int slave_listenint_port;
+        
+        // ...
+    } redisClient;
+    ```
+6. 同步
+7. 命令传播
+
+## 心跳检测
+
+命令传播阶段，从服务器默认以每秒一次的频率，向主服务器发送命令：
+`REPLCONF ACK <replication_offset>`
+
+有三个作用：
+- 检测主从服务器的网络连接状态
+- 辅助实现`min-slaves`选项
+- 检测命令丢失
+
 
 
 
