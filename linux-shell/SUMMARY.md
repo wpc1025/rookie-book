@@ -77,3 +77,7 @@
 * [chage](day77/README.md)
 * [nologin](day78/README.md)
 * [less](day79/README.md)
+* [ssh-keygen](day80/README.md)
+* [nmap](day81/README.md)
+* [iptstate](day82/README.md)
+* [dig](day83/README.md)
