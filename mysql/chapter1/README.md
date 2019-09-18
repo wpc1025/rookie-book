@@ -173,3 +173,9 @@ A事务执行过程中，B事务插入了主键为2的记录并提交，A这时�
 | READ COMMITTED | 不会 | 会 | 会 |
 | REPEATABLE READ | 不会 | 不会 | 会 |
 | SERIALIZABLE | 不会 | 不会 | 不会 |
+
+
+参考博客：  
+[mysql 幻读的详解、实例及解决办法](https://segmentfault.com/a/1190000016566788?utm_source=tag-newest)  
+[五分钟搞清楚 MySQL 事务隔离级别](https://juejin.im/entry/585c8cb9ac502e00671e4c22)  
+[MySQL 事务学习总结](https://juejin.im/entry/57db57b8bf22ec0058ff6759)
