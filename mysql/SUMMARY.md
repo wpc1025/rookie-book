@@ -1,5 +1,3 @@
 * [事务](chapter1/README.md)
-* [Spring事务](chapter2/README.md)
 * [事务总结](chapter3/README.md)
-* [模式](chapter4/README.md)
 * [MySQL中的锁](chapter5/README.md)
