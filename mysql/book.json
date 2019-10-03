@@ -27,6 +27,8 @@
     "paperSize": "a4"
   },
   "plugins": [
+    "back-to-top-button",
+    "page-treeview"
   ],
   "title": "mysql学习笔记",
   "author": "rookie",
