@@ -1,8 +1,10 @@
-# MySQL中的锁与事务
+# MySQL中的锁
 
 > MySQL技术内幕：InnoDB存储引擎  
 > [InnoDB Locking](https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html)  
-> [MySQL InnoDB锁机制全面解析分享](https://segmentfault.com/a/1190000014133576#articleHeader1)
+> [MySQL InnoDB锁机制全面解析分享](https://segmentfault.com/a/1190000014133576#articleHeader1)  
+> [【MySQL】漫谈死锁](https://yq.aliyun.com/articles/282224)  
+> [MySQL如何处理死锁](https://www.cnblogs.com/hhthtt/p/10707541.html)
 
 ## 一、锁
 
@@ -204,5 +206,36 @@ mysql>
 
 ### 1.5 死锁
 
+#### 1.5.1 死锁原因
+- 两个或者两个以上事务。
+- 每个事务都已经持有锁并且申请新的锁。
+- 锁资源同时只能被同一个事务持有或者不兼容。
+- 事务之间因为持有锁和申请锁导致了循环等待。
+
+#### 1.5.2 死锁的处理方式
+
+MySQL有两种死锁处理方式：
+
+1. 等待，直到超时（innodb_lock_wait_timeo   ut=50s）。
+2. 发起死锁检测，主动回滚一条事务，让其他事务继续执行（innodb_deadlock_detect=on）。
+由于性能原因，一般都是使用死锁检测来进行处理死锁。
+
+**死锁检测**
+
+死锁检测的原理是构建一个以事务为顶点、锁为边的有向图，判断有向图是否存在环，存在即有死锁。
+
+**回滚**
+
+检测到死锁之后，选择插入更新或者删除的行数最少的事务回滚，基于 INFORMATION_SCHEMA.INNODB_TRX 表中的 trx_weight 字段来判断。
+#### 1.5.3 如何避免死锁
+
+网上收集了一些注意事项，如下：
+1. 使用事务，不使用 lock tables 。
+2. 保证没有长事务。
+3. 操作完之后立即提交事务，特别是在交互式命令行中。
+4. 如果在用 (SELECT ... FOR UPDATE or SELECT ... LOCK IN SHARE MODE)，尝试降低隔离级别。
+5. 修改多个表或者多个行的时候，将修改的顺序保持一致。
+6. 创建索引，可以使创建的锁更少。
+7. 最好不要用 (SELECT ... FOR UPDATE or SELECT ... LOCK IN SHARE MODE)。
 
 

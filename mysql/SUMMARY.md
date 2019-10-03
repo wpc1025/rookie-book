@@ -2,4 +2,4 @@
 * [Spring事务](chapter2/README.md)
 * [事务总结](chapter3/README.md)
 * [模式](chapter4/README.md)
-* [MySQL中的锁与事务](chapter5/README.md)
+* [MySQL中的锁](chapter5/README.md)
