@@ -4,7 +4,8 @@
 > [InnoDB Locking](https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html)  
 > [MySQL InnoDB锁机制全面解析分享](https://segmentfault.com/a/1190000014133576#articleHeader1)  
 > [【MySQL】漫谈死锁](https://yq.aliyun.com/articles/282224)  
-> [MySQL如何处理死锁](https://www.cnblogs.com/hhthtt/p/10707541.html)
+> [MySQL如何处理死锁](https://www.cnblogs.com/hhthtt/p/10707541.html)  
+> [详解 MySql InnoDB 中的三种行锁（记录锁、间隙锁与临键锁）](https://juejin.im/post/5b8577c26fb9a01a143fe04e)
 
 ## 一、锁
 
@@ -20,8 +21,21 @@
 ### 1.2 锁的种类
 `InnoDB`存储引擎实现了两种标准的行级锁：共享锁、排他锁。同时，`InnoDB`为了实现多粒度锁定、允许事务在行级锁和表级锁共存，支持额外的表锁方式：意向共享锁、意向排他锁。
 
+#### 1.2.1 如何查看锁
+在`MySQL 8.0`中，`performance_schema.data_locks`表存储了持有和请求的数据锁。
+```sql
+SELECT * FROM performance_schema.data_locks;
+```
+- `LOCK_TYPE`：锁的类型，对应`InnoDB`，允许的值`RECORD`用于行级锁，`TABLE`用于表级锁。
+- `LOCK_MODE`：锁定的模式，对应`InnoDB`时，允许值是 S[,GAP]，X[,GAP]， IS[,GAP]，IX[,GAP]， AUTO_INC，和 UNKNOWN。
+- `LOCK_STATUS`：锁的状态，对应`InnoDB`，`GRANTED`表示持有锁，`WAITING`代表等待锁。
 
-#### 1.2.1 排他锁（Exclusive Locks）
+在`MySQL 8.0`中，`performance_schema.data_lock_waits`表显示了`data_locks`表中的哪些数据锁定请求被表中的哪些保留数据锁定阻止。
+```sql
+SELECT * FROM performance_schema.data_lock_waits;
+```
+
+#### 1.2.2 排他锁（Exclusive Locks）
 
 又称为写锁，指的是一个事务获取了一个数据行的排他锁，其他事务就不能再获取该行的其他锁，包括共享锁和排他锁，获得排他锁的事务可以对数据就行读取和修改。
 
@@ -56,7 +70,7 @@ ERROR 1205 (HY000): Lock wait timeout exceeded; try restarting transaction
 
 我们可以看到，当事务一为`id=1`的记录加上排他锁，且未提交事务时，事务二是无法再为`id=1`的记录加排他锁和共享锁的。
 
-#### 1.2.2 共享锁（Shared Locks）
+#### 1.2.3 共享锁（Shared Locks）
 
 又称为读锁，是指多个事务对同一数据可以共享一把锁，都能访问到数据，但是只能读不能修改。
 
@@ -103,7 +117,7 @@ ERROR 1205 (HY000): Lock wait timeout exceeded; try restarting transaction
 
 我们从上面的例子可以看出，当为`id=1`的记录加上共享锁，且事务未提交时，其他事务是可以加共享锁及不加锁读取`id=1`的记录，但不可以更新记录以及加排他锁。
 
-#### 1.2.3 意向排他锁（Intention Exclusive Locks）
+#### 1.2.4 意向排他锁（Intention Exclusive Locks）
 
 事务想要获得一张表中某几行的排他锁。当为表的某行加上排他锁或共享锁之后，默认会为表加上意向排他锁或意向共享锁。意向锁不会与行级的共享/排他锁互斥，只会与表级的的共享锁、排他锁冲突。
 
@@ -145,7 +159,7 @@ mysql>
 
 从以上例子我们可以知道：当为行加排他锁后，意向排他锁默认已经为表加上，这个时候是无法为表加排他锁、共享锁的，但是并不影响为其他行增加共享锁或排他锁。
 
-#### 1.2.4 意向共享锁（Intention Shared Locks）
+#### 1.2.5 意向共享锁（Intention Shared Locks）
 
 事务想要获得一张表中某几行的共享锁
 
@@ -187,14 +201,111 @@ mysql>
 - 间隙锁（Gap Locks）：锁定一个范围，但不包含记录本身
 - 临键锁（Next-Key Locks）：记录锁+间隙锁，锁定一个范围，并且锁定记录本身
 
-`InnoDB`所有的行锁算法都是基于索引实现的，锁定的也都是索引或索引区间
+#### 1.3.1 记录锁（Record Locks）
 
-| 等值查询使用的索引类型 | 锁定内容 |
-|:--- | :--- |
-| 主键（聚簇索引） | 对聚簇索引记录+记录锁 |
-| 唯一索引 | 对辅助索引记录+记录锁<br>对聚簇索引记录+记录锁 |
-| 普通索引 | 对相关辅助索引+临键锁<br>对聚簇索引记录+记录锁 |
-| 不使用索引 | 对聚簇索引全表+临键锁 |
+1. 只有锁定的列为**主键**或**唯一索引**列时，加的才是记录锁
+2. 若锁定的列无索引，则会导致整个表被锁住
+3. 当锁定的列有索引（非主键、非唯一索引）时，会怎样？
+
+**当查询列为主键时：**
+```sql
+# 开启事务
+mysql> begin;
+Query OK, 0 rows affected (0.00 sec)
+
+# id为主键
+mysql> select * from user where id = 1 for update;
++----+----------+-----------+
+| id | password | username  |
++----+----------+-----------+
+|  1 | rookie   | 120522119 |
++----+----------+-----------+
+1 row in set (0.00 sec)
+
+mysql>
+
+# 查询数据库持有的锁
+mysql> SELECT * FROM performance_schema.data_locks LIMIT 0, 1000;
++--------+------------------------------------+-----------------------+-----------+----------+---------------+-------------+----------------+-------------------+------------+-----------------------+-----------+---------------+-------------+-----------+
+| ENGINE | ENGINE_LOCK_ID                     | ENGINE_TRANSACTION_ID | THREAD_ID | EVENT_ID | OBJECT_SCHEMA | OBJECT_NAME | PARTITION_NAME | SUBPARTITION_NAME | INDEX_NAME | OBJECT_INSTANCE_BEGIN | LOCK_TYPE | LOCK_MODE     | LOCK_STATUS | LOCK_DATA |
++--------+------------------------------------+-----------------------+-----------+----------+---------------+-------------+----------------+-------------------+------------+-----------------------+-----------+---------------+-------------+-----------+
+| INNODB | 1162891094680:1121:1162856936152   |                 11615 |        52 |       99 | test          | user        | NULL           | NULL              | NULL       |         1162856936152 | TABLE     | IX            | GRANTED     | NULL      |
+| INNODB | 1162891094680:64:4:2:1162856933368 |                 11615 |        52 |       99 | test          | user        | NULL           | NULL              | PRIMARY    |         1162856933368 | RECORD    | X,REC_NOT_GAP | GRANTED     | 1         |
++--------+------------------------------------+-----------------------+-----------+----------+---------------+-------------+----------------+-------------------+------------+-----------------------+-----------+---------------+-------------+-----------+
+2 rows in set (0.00 sec)
+
+# 提交事务
+mysql> commit;
+Query OK, 0 rows affected (0.00 sec)
+```
+
+**当查询列为唯一索引时：**
+```sql
+# 开启事务
+mysql> begin;
+Query OK, 0 rows affected (0.00 sec)
+
+# password为唯一索引
+mysql> select * from user where password='rookie' for update;
++----+----------+-----------+
+| id | password | username  |
++----+----------+-----------+
+|  1 | rookie   | 120522119 |
++----+----------+-----------+
+1 row in set (0.00 sec)
+
+mysql> select * from performance_schema.data_locks;
++--------+------------------------------------+-----------------------+-----------+----------+---------------+-------------+----------------+-------------------+--------------+-----------------------+-----------+---------------+-------------+-----------+
+| ENGINE | ENGINE_LOCK_ID                     | ENGINE_TRANSACTION_ID | THREAD_ID | EVENT_ID | OBJECT_SCHEMA | OBJECT_NAME | PARTITION_NAME | SUBPARTITION_NAME | INDEX_NAME   | OBJECT_INSTANCE_BEGIN | LOCK_TYPE | LOCK_MODE     | LOCK_STATUS | LOCK_DATA |
++--------+------------------------------------+-----------------------+-----------+----------+---------------+-------------+----------------+-------------------+--------------+-----------------------+-----------+---------------+-------------+-----------+
+| INNODB | 1162891094680:1121:1162856936152   |                 11641 |        52 |      106 | test          | user        | NULL           | NULL              | NULL         |         1162856936152 | TABLE     | IX            | GRANTED     | NULL      |
+| INNODB | 1162891094680:64:6:4:1162856933368 |                 11641 |        52 |      106 | test          | user        | NULL           | NULL              | uni_password |         1162856933368 | RECORD    | X,REC_NOT_GAP | GRANTED     | 'rookie'  |
+| INNODB | 1162891094680:64:4:2:1162856933712 |                 11641 |        52 |      106 | test          | user        | NULL           | NULL              | PRIMARY      |         1162856933712 | RECORD    | X,REC_NOT_GAP | GRANTED     | 1         |
++--------+------------------------------------+-----------------------+-----------+----------+---------------+-------------+----------------+-------------------+--------------+-----------------------+-----------+---------------+-------------+-----------+
+3 rows in set (0.00 sec)
+mysql> commit;
+Query OK, 0 rows affected (0.00 sec)
+```
+
+**当查询列无索引时：**
+```sql
+# 事务一
+mysql> begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select * from user where password='rookie' for update;
++----+----------+-----------+
+| id | password | username  |
++----+----------+-----------+
+|  1 | rookie   | 120522119 |
++----+----------+-----------+
+1 row in set (0.00 sec)
+
+mysql> select * from performance_schema.data_locks;
++--------+------------------------------------+-----------------------+-----------+----------+---------------+-------------+----------------+-------------------+------------+-----------------------+-----------+-----------+-------------+------------------------+
+| ENGINE | ENGINE_LOCK_ID                     | ENGINE_TRANSACTION_ID | THREAD_ID | EVENT_ID | OBJECT_SCHEMA | OBJECT_NAME | PARTITION_NAME | SUBPARTITION_NAME | INDEX_NAME | OBJECT_INSTANCE_BEGIN | LOCK_TYPE | LOCK_MODE | LOCK_STATUS | LOCK_DATA              |
++--------+------------------------------------+-----------------------+-----------+----------+---------------+-------------+----------------+-------------------+------------+-----------------------+-----------+-----------+-------------+------------------------+
+| INNODB | 1162891094680:1121:1162856936152   |                 11650 |        52 |      117 | test          | user        | NULL           | NULL              | NULL       |         1162856936152 | TABLE     | IX        | GRANTED     | NULL                   |
+| INNODB | 1162891094680:64:4:1:1162856933368 |                 11650 |        52 |      117 | test          | user        | NULL           | NULL              | PRIMARY    |         1162856933368 | RECORD    | X         | GRANTED     | supremum pseudo-record |
+| INNODB | 1162891094680:64:4:2:1162856933368 |                 11650 |        52 |      117 | test          | user        | NULL           | NULL              | PRIMARY    |         1162856933368 | RECORD    | X         | GRANTED     | 1                      |
+| INNODB | 1162891094680:64:4:3:1162856933368 |                 11650 |        52 |      117 | test          | user        | NULL           | NULL              | PRIMARY    |         1162856933368 | RECORD    | X         | GRANTED     | 2                      |
+| INNODB | 1162891094680:64:4:4:1162856933368 |                 11650 |        52 |      117 | test          | user        | NULL           | NULL              | PRIMARY    |         1162856933368 | RECORD    | X         | GRANTED     | 3                      |
+| INNODB | 1162891094680:64:4:5:1162856933368 |                 11650 |        52 |      117 | test          | user        | NULL           | NULL              | PRIMARY    |         1162856933368 | RECORD    | X         | GRANTED     | 4                      |
++--------+------------------------------------+-----------------------+-----------+----------+---------------+-------------+----------------+-------------------+------------+-----------------------+-----------+-----------+-------------+------------------------+
+6 rows in set (0.00 sec)
+
+# 事务二
+mysql> begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> insert into user values (null,'zhh','zhh');
+^C -- query aborted
+ERROR 1317 (70100): Query execution was interrupted
+```
+
+#### 1.3.2 间隙锁（Gap Locks）
+
+#### 1.3.3 临键锁（Next-Key Locks）
 
 ### 1.4 锁问题
 
@@ -231,11 +342,11 @@ MySQL有两种死锁处理方式：
 
 网上收集了一些注意事项，如下：
 1. 使用事务，不使用 lock tables 。
-2. 保证没有长事务。
+2. 尽量避免大事务，占有的资源锁越多，越容易出现死锁。建议拆成小事务。
 3. 操作完之后立即提交事务，特别是在交互式命令行中。
-4. 如果在用 (SELECT ... FOR UPDATE or SELECT ... LOCK IN SHARE MODE)，尝试降低隔离级别。
-5. 修改多个表或者多个行的时候，将修改的顺序保持一致。
-6. 创建索引，可以使创建的锁更少。
+4. 降低隔离级别。如果业务允许，将隔离级别调低也是较好的选择，比如将隔离级别从 RR 调整为 RC，可以避免掉很多因为 gap 锁造成的死锁。
+5. 以固定的顺序访问表和行。交叉访问更容易造成事务等待回路。
+6. 为表添加合理的索引。防止没有索引出现表锁，出现死锁的概率会突增。
 7. 最好不要用 (SELECT ... FOR UPDATE or SELECT ... LOCK IN SHARE MODE)。
 
 
