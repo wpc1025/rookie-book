@@ -205,7 +205,6 @@ mysql>
 
 1. 只有锁定的列为**主键**或**唯一索引**列时，加的才是记录锁
 2. 若锁定的列无索引，则会导致整个表被锁住
-3. 当锁定的列有索引（非主键、非唯一索引）时，会怎样？
 
 **当查询列为主键时：**
 ```sql
@@ -305,15 +304,212 @@ ERROR 1317 (70100): Query execution was interrupted
 
 #### 1.3.2 间隙锁（Gap Locks）
 
+基于`非唯一`索引，它`锁定一段范围内的索引记录`，使用间隙锁锁住的是一个区间，而不仅仅是这个区间的每一条数据。
+
+```sql
+# 事务一
+mysql> begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select * from user where age between 2 and 9 for update;
+Empty set (0.00 sec)
+
+# 事务二
+mysql> begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select * from user where age = 0 for update;
++----+----------+-----------+-----+
+| id | password | username  | age |
++----+----------+-----------+-----+
+|  1 | rookie   | 120522119 |   0 |
++----+----------+-----------+-----+
+1 row in set (0.00 sec)
+
+mysql> select * from user where age = 20 for update;
+ERROR 1205 (HY000): Lock wait timeout exceeded; try restarting transaction
+mysql> select * from user where age = 40 for update;
++----+----------+----------+-----+
+| id | password | username | age |
++----+----------+----------+-----+
+|  3 | hfg      | hfg      |  40 |
++----+----------+----------+-----+
+1 row in set (0.00 sec)
+mysql> insert into user values (null,'zn','zn',5);
+ERROR 1205 (HY000): Lock wait timeout exceeded; try restarting transaction
+```
+
+由上可知，锁定的区间是`(0,20]`，左开右闭的区间。
+
 #### 1.3.3 临键锁（Next-Key Locks）
+
+`临键锁`存在于`非唯一索引`中，该类型的每条记录的索引上都存在这种锁，它是一种特殊的间隙锁，锁定一段左开右闭的索引区间。
 
 ### 1.4 锁问题
 
-|锁问题|	锁问题描述|会出现锁问题的隔离级别|解决办法|
-|:---|:---|:---|:---|
-| 脏读 | 一个事务中会读到其他并发事务未提交的数据，违反了事务的隔离性 | Read Uncommitted | 提高事务隔离级别至Read Committed及以上 |
-| 不可重复读 | 一个事务会读到其他并发事务已提交的数据，违反了数据库的一致性要求；<br>可能出现的问题为幻读，幻读是指在同一事务下，连续执行两次同样的SQL语句可能导致不同的结果，第二次的SQL语句可能返回之前不存在的行记录 | Read Uncommitted、Read Committed | 默认的RR隔离级别下 ，解决办法分为两种情况：1、当前读：Next-Key Lock机制对相关索引记录及索引间隙加锁，防止并发事务修改数据或插入新数据到间隙；<br>版本读：MVCC，保证事务执行过程中只有第一次读之前提交的修改和自己的修改可见，其他的均不可见；提高事务隔离级别至Serializable|
-|丢失更新 | | Read Uncommitted、Read Committed、Repeatable Read | 默认的RR隔离级别下 ，解决办法分为两种情况：1、乐观锁：数据表增加version字段，读取数据时记录原始version，更新数据时，比对version是否为原始version，如不等，则证明有并发事务已更新过此行数据，则可回滚事务后重试直至无并发竞争；<br>2、悲观锁：读加排他锁，保证整个事务执行过程中，其他并发事务无法读取相关记录，直至当前事务提交或回滚释放锁|
+通过锁定机制可以实现事务的隔离性要求，使得事务可以并发的工作。锁提高了并发，但是却会带来潜在的问题
+
+#### 1.4.1 隔离级别
+
+`MySQL`支持四种隔离级别，如下表所示，默认支持的是`REPEATABLE READ`。
+
+| 隔离级别 | 描述 |
+| :--- | :--- |
+| READ UNCOMMITTED | 读未提交 |
+| READ COMMITTED | 读提交 |
+| REPEATABLE READ | 可重复读 |
+| SERIALIZABLE | 串行 |
+
+#### 1.4.2 隔离级别的设置
+
+**查询隔离级别**
+```sql
+select @@GLOBAL.transaction_isolation;
+select @@SESSION.transaction_isolation;
+```
+
+**设置隔离级别**
+```sql
+set GLOBAL TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+set SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+```
+
+#### 1.4.3 脏读
+
+什么是脏读？脏读指的是，A、B两个事务，A事务执行过程中读取到了B事务未提交的数据。
+
+1. 设置隔离级别为`READ UNCOMMITTED`
+    ```
+    set GLOBAL TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+    ```
+
+2. A事务
+
+    ```
+    mysql> begin;
+    Query OK, 0 rows affected (0.00 sec)
+    
+    mysql> select * from t_accounts;
+    Empty set (0.00 sec)
+    ```
+
+3. B事务
+    ```
+    mysql> begin;
+    Query OK, 0 rows affected (0.00 sec)
+    
+    mysql> insert into t_accounts values (1,1000);
+    Query OK, 1 row affected (0.00 sec)
+    ```
+
+4. A事务
+
+    ```
+    mysql> select * from t_accounts;
+    +----+-------+
+    | id | money |
+    +----+-------+
+    |  1 |  1000 |
+    +----+-------+
+    1 row in set (0.00 sec)
+    ```
+
+如上所示：  
+在B事务未提交时，A事务就已经查询到了B事务中插入的新数据，这就是脏读
+
+#### 1.4.4 不可重复读
+在同一事务中，由于其他事务对数据更改的提交，导致多次查询返回的结果不一致，这就是不可重复读。
+
+1. 设置隔离级别为`READ COMMITTED`
+   ```
+   set GLOBAL TRANSACTION ISOLATION LEVEL READ COMMITTED;
+   ```
+2. A事务
+   ```
+   mysql> begin;
+   Query OK, 0 rows affected (0.00 sec)
+   
+   mysql> select * from t_accounts;
+   Empty set (0.00 sec)
+   ```
+
+3. B事务
+   ```
+   mysql> begin;
+   Query OK, 0 rows affected (0.00 sec)
+   
+   mysql> insert into t_accounts values (1, 1000);
+   Query OK, 1 row affected (0.00 sec)
+   
+   mysql> commit;
+   Query OK, 0 rows affected (0.01 sec)
+   ```
+
+4. A事务
+   ```
+   mysql> select * from t_accounts;
+   +----+-------+
+   | id | money |
+   +----+-------+
+   |  1 |  1000 |
+   +----+-------+
+   1 row in set (0.00 sec)
+   ```
+
+如上所示：  
+在A事务未提交过程中，两次查询结果不一致，这就是不可重复读
+
+#### 1.4.5 幻读
+           
+这里引用看到的博客中的一段话：
+
+*幻读错误的理解：说幻读是 事务A 执行两次 select 操作得到不同的数据集，即 select 1 得到 10 条记录，select 2 得到 11 条记录。这其实并不是幻读，这是不可重复读的一种，只会在 R-U R-C 级别下出现，而在 mysql 默认的 RR 隔离级别是不会出现的。*
+
+*幻读，并不是说两次读取获取的结果集不同，幻读侧重的方面是某一次的 select 操作得到的结果所表征的数据状态无法支撑后续的业务操作。更为具体一些：select 某记录是否存在，不存在，准备插入此记录，但执行 insert 时发现此记录已存在，无法插入，此时就发生了幻读。*
+
+1. 设置隔离级别为`REPEATABLE READ`
+```
+set GLOBAL TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+```
+
+2. A事务
+```
+mysql> begin;
+Query OK, 0 rows affected (0.00 sec)
+```
+
+3. B事务
+```
+mysql> begin;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> insert into t_accounts values (2,2000);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> commit;
+Query OK, 0 rows affected (0.01 sec)
+```
+
+4. A事务
+```
+mysql> select * from t_accounts where id = 2;
+Empty set (0.00 sec)
+mysql> insert into t_accounts values (2,2000);
+ERROR 1062 (23000): Duplicate entry '2' for key 'PRIMARY'
+```
+
+如上所示：  
+A事务执行过程中，B事务插入了主键为2的记录并提交，A这时查询主键为2的记录是查询不到，满足了可重复读，
+但是，A事务却无法插入主键为2的记录，看起来没有，但是实际上已经有了，难道我看花了眼？这就是幻读。
+
+#### 1.4.6 隔离级别总结
+
+| | 脏读 | 不可重复读 | 幻读 |
+|:--- | :---  | :---- | :--- |
+| READ UNCOMMITTED | 会 | 会 | 会 |
+| READ COMMITTED | 不会 | 会 | 会 |
+| REPEATABLE READ | 不会 | 不会 | 会 |
+| SERIALIZABLE | 不会 | 不会 | 不会 |
 
 ### 1.5 死锁
 
