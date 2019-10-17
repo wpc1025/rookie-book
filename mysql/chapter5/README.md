@@ -1,11 +1,9 @@
 # MySQL中的锁
 
 > MySQL技术内幕：InnoDB存储引擎  
-> [InnoDB Locking](https://dev.mysql.com/doc/refman/8.0/en/innodb-locking.html)  
-> [MySQL InnoDB锁机制全面解析分享](https://segmentfault.com/a/1190000014133576#articleHeader1)  
-> [【MySQL】漫谈死锁](https://yq.aliyun.com/articles/282224)  
-> [MySQL如何处理死锁](https://www.cnblogs.com/hhthtt/p/10707541.html)  
-> [详解 MySql InnoDB 中的三种行锁（记录锁、间隙锁与临键锁）](https://juejin.im/post/5b8577c26fb9a01a143fe04e)
+> [MySQL 加锁处理分析](https://www.cnblogs.com/tutar/p/5878651.html)  
+> [MySQL索引和SQL调优](https://juejin.im/post/5a6873fbf265da3e393a97fa#comment)  
+> [mysql死锁问题分析](https://yq.aliyun.com/articles/5533?&utm_source=qq)  
 
 ## 一、锁
 
