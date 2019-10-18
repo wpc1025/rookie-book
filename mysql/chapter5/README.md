@@ -489,6 +489,7 @@ set SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ;
     ```
 
 4. A事务
+
     ```
     mysql> select * from t_accounts where id = 2;
     Empty set (0.00 sec)
