@@ -466,35 +466,35 @@ set SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ;
 *幻读，并不是说两次读取获取的结果集不同，幻读侧重的方面是某一次的 select 操作得到的结果所表征的数据状态无法支撑后续的业务操作。更为具体一些：select 某记录是否存在，不存在，准备插入此记录，但执行 insert 时发现此记录已存在，无法插入，此时就发生了幻读。*
 
 1. 设置隔离级别为`REPEATABLE READ`
-```
-set GLOBAL TRANSACTION ISOLATION LEVEL REPEATABLE READ;
-```
+    ```
+    set GLOBAL TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+    ```
 
 2. A事务
-```
-mysql> begin;
-Query OK, 0 rows affected (0.00 sec)
-```
+    ```
+    mysql> begin;
+    Query OK, 0 rows affected (0.00 sec)
+    ```
 
 3. B事务
-```
-mysql> begin;
-Query OK, 0 rows affected (0.00 sec)
-
-mysql> insert into t_accounts values (2,2000);
-Query OK, 1 row affected (0.00 sec)
-
-mysql> commit;
-Query OK, 0 rows affected (0.01 sec)
-```
+    ```
+    mysql> begin;
+    Query OK, 0 rows affected (0.00 sec)
+    
+    mysql> insert into t_accounts values (2,2000);
+    Query OK, 1 row affected (0.00 sec)
+    
+    mysql> commit;
+    Query OK, 0 rows affected (0.01 sec)
+    ```
 
 4. A事务
-```
-mysql> select * from t_accounts where id = 2;
-Empty set (0.00 sec)
-mysql> insert into t_accounts values (2,2000);
-ERROR 1062 (23000): Duplicate entry '2' for key 'PRIMARY'
-```
+    ```
+    mysql> select * from t_accounts where id = 2;
+    Empty set (0.00 sec)
+    mysql> insert into t_accounts values (2,2000);
+    ERROR 1062 (23000): Duplicate entry '2' for key 'PRIMARY'
+    ```
 
 如上所示：  
 A事务执行过程中，B事务插入了主键为2的记录并提交，A这时查询主键为2的记录是查询不到，满足了可重复读，
