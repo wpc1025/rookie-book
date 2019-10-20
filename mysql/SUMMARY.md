@@ -2,3 +2,4 @@
 * [索引](chapter1/README.md)
 * [MySQL中的锁](chapter5/README.md)
 * [InnoDB存储引擎](chapter12/README.md)
+* [表](chapter14/README.md)
