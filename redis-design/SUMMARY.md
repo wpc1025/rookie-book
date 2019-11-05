@@ -15,5 +15,6 @@
 * [复制](chapter15/README.md)
 * [哨兵](chapter16/README.md)
 * [集群](chapter17/README.md)
-* [集群](chapter17/README.md)
 * [二进制位数组](chapter22/README.md)
+* [慢查询日志](chapter23/README.md)
+* [监视器](chapter24/README.md)
