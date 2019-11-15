@@ -1,5 +1,5 @@
 {
-  "description": "java核心技术卷笔记",
+  "description": "java学习笔记",
   "extension": null,
   "generator": "site",
   "links": {
@@ -27,7 +27,7 @@
     "paperSize": "a4"
   },
   "plugins": [],
-  "title": "java核心技术卷笔记",
+  "title": "java学习笔记",
   "author": "rookie",
   "variables": {},
   "language": "zh-hans"
