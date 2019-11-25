@@ -62,6 +62,97 @@ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic topic-demo
 
 ## 1.3 java客户端
 
+**生产者Java端代码**
+
+```java
+package com.mrrookie.practice.producer;
+
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.StringSerializer;
+
+import java.util.Properties;
+
+/**
+ * Kafka生产者客户端
+ */
+public class ProducerFastStart {
+    public static final String brokerList = "localhost:9092";
+    public static final String topic = "topic-demo";
+
+    public static void main(String[] args) {
+        Properties properties = new Properties();
+        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokerList);
+
+        KafkaProducer<String, String> producer = new KafkaProducer<String, String>(properties);
+        ProducerRecord<String, String> record = new ProducerRecord<>(topic, "hello, Kafka");
+
+        try {
+            producer.send(record);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        producer.close();
+    }
+}
+```
+
+**消费者Java端代码**
+
+```java
+package com.mrrookie.practice.consumer;
+
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.StringDeserializer;
+
+import java.time.Duration;
+import java.util.Collections;
+import java.util.Properties;
+
+/**
+ * Kafka消费端实例
+ */
+public class CosumerFastStart {
+    public static final String brokerList = "localhost:9092";
+    public static final String topic = "topic-demo";
+    public static final String groupId = "group.demo";
+
+    public static void main(String[] args) {
+        Properties properties = new Properties();
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, brokerList);
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+
+        KafkaConsumer<String, String> consumer = new KafkaConsumer<String, String>(properties);
+        consumer.subscribe(Collections.singletonList(topic));
+
+        while (true) {
+            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
+            for (ConsumerRecord<String, String> record : records) {
+                System.out.println(record.value());
+            }
+        }
+    }
+}
+```
+
+## 1.4 服务端参数配置
+
+| 参数 | 描述 |
+| :--- | :--- |
+| zookeeper.connect | 指明broker要连接的Zookeeper集群的服务地址（包含端口号），没有默认值，必填。建议加一个chroot路径，如 localhost:2181,localhost2:2181,localhost3:2181/kafka |
+| listeners | 指明broker监听客户端连接的地址列表，即为客户端要连接的broker的入口地址列表，配置格式为 protocol1://hostname1:port1,protocol2:hostname2:port2，其中protocol代表协议类型，支持PLAINTEXT、SSL、SASL_SSL等 |
+| broker.id | 指定kafka集群中broker的唯一标识，默认值是-1，如果没有设置，Kafka会自动生成一个 |
+| log.dir 和 log.dirs | 配置Kafka日志文件存放的根目录 |
+| message.max.bytes | 指定broker所能接收消息的最大值，默认值是1000012B。Producer发送的消息大小超过该值会报RecordTooLargeException异常。不建议修改，建议分拆消息 |
 
 
 
