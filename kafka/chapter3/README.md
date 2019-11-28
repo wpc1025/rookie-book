@@ -109,7 +109,66 @@ public void close(long timeout, TimeUnit timeunit);
 
 ### 3.2.7 指定位移消费
 
+- 在Kafka中，当消费者查找不到所记录的消费位移或位移越界时，就会根据消费者客户端设置的参数 auto.offset.reset 的配置来决定从何处进行消费
+    - latest，默认值，从分区末尾开始消费
+    - earliest 从起始处开始消费
+    - none 报出 NoOffsetForPartitionException 异常
+    - 不配置，报出 ConfigException 异常
+- KafkaConsumer 提供的 seek() 方法，可以让我们从特定的位移处开始拉取消息，得以追前消费或回溯消费
+```
+public void seek(TopicPartition partition, long offset)
+```
+- KafkaConsumer 直接提供了 seekToBeginning() 方法和 seekToEnd() 方法来从分区的开头和末尾开始消费
+- KafkaConsumer 提供了 offsetsForTimes() 方法，通过 timestamp 来查询与此对应的分区位置
 
+### 3.2.8 再均衡
+
+- 指分区的所属权从一个消费者转移到另一个消费者的行为，为消费组具备高可用性和伸缩性提供保障
+- 在再均衡发生期间，消费组内的消费者无法读取消息。且有可能发生重复消费
+- KafkaConsumer 的 subscribe() 方法提供了再均衡监听器 ConsumerRebalanceListener 接口，提供了两个方法。
+```
+// 在再均衡发生之前和消费者停止读取消息之后被调用
+void onPartitionsRevoked(Collection<TopicPartition> partitions)
+
+// 在重新分配分区之后和消费者开始读取消费之前被调用
+void onPartitionsAssigned(Collection<TopicPartition> partitions)
+```
+
+### 3.2.9 消费者拦截器
+
+- 消费者拦截器主要在消费到消息或在提交消费位移时进行一些定制化的操作
+- 需要自定义实现 org.apache.kafka.clients.consumer.ConsumerInterceptor 接口
+```
+// 在poll()方法返回之前调用拦截器的 onConsume 方法对消息进行相应的定制化操作
+public ConsumerRecords<K,V> onConsume(ConsumerRecords<K,V> records)
+
+// KafkaConsumer 会在提交完消费位移之后调用拦截器的 onCommit() 方法，可以使用这个方法跟踪所提交的位移信息
+public void onCommit(Map<TopicPartition, OffsetAndMetadata> offset)
+
+public void close()
+```
+- 自定义的消费者拦截器，需要在 KafkaConsumer 中配置这个拦截器
+- 同样，可配置多个拦截器，组成拦截器链
+
+### 3.2.10 多线程实现
+
+- KafkaConsumer 是非线程安全的，定义了一个 acquire() 方法，用来检测当前是否只有一个线程在操作，若有其他线程正在操作则会抛出 ConcurrentModifcationException 异常
+- 多线程的实现方式
+    - 线程封闭，每个线程都实例化一个 KafkaConsumer 对象。并发度受限于分区的实际个数
+    - 多个消费线程同时消费同一个分区。打破消费线程个数不能超过分区数的限制，不过对于位移提交和顺序控制的处理就会变得复杂
+    - 将处理消息模块改成多线程的实现方式（推荐），要注意消息的顺序消费及位移提交的时机，有可能会造成消息丢失。
+    
+### 3.2.11 消费者参数
+
+| 参数 | 描述 |
+| :--- | :--- |
+| fetch.min.bytes | 配置Consumer在一次拉取请求（调用poll方法）中能从kafka中拉取的最小数据量，默认值为1B |
+| fetch.max.bytes | 配置Consumer在一次拉取请求（调用poll方法）中能从kafka中拉取的最大数据量，默认值为50MB |
+| fetch.max.wait.ms | 指定Kafka的等待时间，默认500ms，超过这个时间，不管是否满足 fetch.min.bytes 的要求，都会返回 |
+| max.partition.fetch.bytes | 用来配置从每个分区里返回给 consumer 的最大数据量，默认是1MB |
+| max.poll.records | 用来配置 Consumer 在一次拉取请求中拉取的最大消息数，默认值为500条 |
+| exclude.internal.topics | 用来指定Kafka中的内部主题是否可以向消费者公开，默认为true |
+    
 
 
 
