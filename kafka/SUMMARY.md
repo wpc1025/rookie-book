@@ -2,3 +2,5 @@
 * [生产者](chapter2/README.md)
 * [消费者](chapter3/README.md)
 * [主题和分区](chapter4/README.md)
+* [日志存储](chapter5/README.md)
+* [深入服务端](chapter6/README.md)
