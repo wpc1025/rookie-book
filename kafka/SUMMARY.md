@@ -5,3 +5,4 @@
 * [日志存储](chapter5/README.md)
 * [深入服务端](chapter6/README.md)
 * [深入客户端](chapter7/README.md)
+* [可靠性探究](chapter8/README.md)
