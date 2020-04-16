@@ -2,3 +2,4 @@
 * [第三章 垃圾收集器和内存分配策略](chapter3/README.md)
 * [第四章 虚拟机性能监控与故障处理工具](chapter4/README.md)
 * [第六章 类文件结构](chapter6/README.md)
+* [第七章 虚拟机类加载机制](chapter7/README.md)
